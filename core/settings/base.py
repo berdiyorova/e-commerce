@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
+import os
+import sys
 import environ
 
 
@@ -20,7 +22,11 @@ env = environ.Env(
     DEBUG=(bool, True)
 )
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# # apps papkani system dirga qo'shdim, endi appni o'zini yozib ishlatsangiz ham taniy oladi,
+# # aks holda, apps.products, apps.orders qilib chaqirish kerak
+sys.path.append(os.path.join(BASE_DIR, "apps"))
 environ.Env.read_env('.env')
 
 
@@ -147,12 +153,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env.str('DB_NAME'),
-        'USER': env.str('DB_USER'),
-        'PASSWORD': env.str('DB_PASSWORD'),
-        'HOST': env.str('DB_HOST'),
-        'PORT': env.str('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'NAME': env.str('DB_NAME'),
+        # 'USER': env.str('DB_USER'),
+        # 'PASSWORD': env.str('DB_PASSWORD'),
+        # 'HOST': env.str('DB_HOST'),
+        # 'PORT': env.str('DB_PORT'),
     }
 }
 

@@ -3,7 +3,11 @@ from rest_framework.generics import UpdateAPIView, ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from orders.serializers import *
+from orders.models import *
+from orders.serializers import (
+    AddToCartSerializer, CartItemListSerializer,
+    OrderCreateSerializer, UpdateCartItemSerializer,
+)
 
 
 class AddToCartView(APIView):

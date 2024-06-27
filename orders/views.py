@@ -11,7 +11,6 @@ from orders.serializers import *
 # Create your views here.
 class AddToCartView(APIView):
     serializer_class = AddToCartSerializer
-    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -38,7 +37,6 @@ class UpdateUserCartItem(UpdateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = UpdateCartItemSerializer
     lookup_field = 'product_id'
-    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         cart_item = self.queryset.get(user=self.request.user, product=self.kwargs.get(self.lookup_field))
@@ -48,7 +46,6 @@ class UpdateUserCartItem(UpdateAPIView):
 class CartItemsListView(ListAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemListSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -57,7 +54,6 @@ class CartItemsListView(ListAPIView):
 class OrderCreateView(CreateAPIView):
     queryset = Orders.objects.all()
     serializer_class = OrderCreateSerializer
-    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         try:

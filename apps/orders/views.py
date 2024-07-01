@@ -41,22 +41,25 @@ class AddToCartView(APIView):
         Requestda kelgan datani ishlash uchun serializer class ni
         kerakli parametrlarni o'tkazgan holda qaytaradi.
         Misol uchun `request` serializer class da ishlatiladimi? shu yerda 
-        qo'shib yuborish kerak 
+        qo'shib yuborish kerak
         """
         kwargs = self.get_serializer_context(**kwargs)
         return self.serializer_class(**kwargs)
 
-    def get_serializer_context(self):
+    def get_serializer_context(self, **kwargs):
         """
         Serializer ga o'tkaziladigan asosiy context ni qaytaradi.
         """
-        return {
-            "request": self.request,
-            "view": self,
-            # example: AYtaylik serializerda user bilan ishlangan:
-            "user": self.request.user
-            # ...
-        }
+        kwargs.update(
+            {
+                "request": self.request,
+                "view": self,
+                # example: AYtaylik serializerda user bilan ishlangan:
+                "user": self.request.user
+                # ...
+            }
+        )
+        return kwargs
 
 
     # def post(self, request, *args, **kwargs):

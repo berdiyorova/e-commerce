@@ -8,6 +8,15 @@ from products.serializers import ProductSerializer
 
 
 class AddToCartSerializer(serializers.Serializer):
+
+    def __init__(self, *args, **kwargs):
+        # bu yerda get_Serializer_context dagi qaytgan qiymatlarni qo'shdim
+        self.request = kwargs.pop('request')
+        self.view = kwargs.pop('view')
+        self.user = kwargs.pop('user')
+
+        super().__init__(*args, **kwargs)
+
     product = serializers.PrimaryKeyRelatedField(queryset=Products.objects.all(), required=True)
     quantity = serializers.IntegerField(required=True)
     # attributes = serializers.ListField(child=serializers.IntegerField(min_value=1))

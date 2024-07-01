@@ -68,7 +68,10 @@ class AddToCartSerializer(serializers.Serializer):
             return self.create(data)
 
     def create(self, validated_data):
+        attributes = validated_data.pop('attributes', [])
         self.instance = CartItem.objects.create(**validated_data)
+        if attributes:
+            self.instance.attributes.set(attributes)
         return self.instance
 
     # lekin, agar update method ni ishlatmasangiz yozish shart emas.

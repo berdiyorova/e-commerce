@@ -4,7 +4,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
-from products.serializers import *
+from products.models import Category, Products, Discount
+from products.serializers import CategorySerializer, ProductSerializer, DiscountSerializer
 
 
 class CategoryListView(generics.ListAPIView):

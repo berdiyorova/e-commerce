@@ -20,7 +20,7 @@ env = environ.Env(
     DEBUG=(bool, True)
 )
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 environ.Env.read_env('.env')
 
 
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'taggit',
     'django_filters',
+    'drf_spectacular',
 ]
 
 TAGGIT_CASE_INSENSITIVE = True
@@ -79,6 +80,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Куда пицца',
+    'DESCRIPTION': 'Ecommerce website api documentation',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 SIMPLE_JWT = {

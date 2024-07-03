@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from taggit.serializers import (TagListSerializerField,
                                 TaggitSerializer)
 
-from products.models import *
+from products.models import Category, Products, AttributeValue, Discount
 
 
 class ProductSerializer(TaggitSerializer, serializers.ModelSerializer):

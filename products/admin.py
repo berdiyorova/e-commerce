@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from products.models import *
+from products.models import Category, Products, Attribute, AttributeValue, Discount
 
 
 @admin.register(Category)

@@ -16,17 +16,7 @@ class AddToCartView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
 
-        # # serializer qaytaradigan hamma exceptionlar
-        # shu yerda clientga qaytariladi.
         serializer.is_valid(raise_exception=True)
-
-        # # 1. serializer.save() serializer.create() methodga murojaat qiladi
-        # #chunki serializer da hali `instance` attribute o'rnatilmagan,
-        # #aks holda serializer.update(serializer.instance) method ni chaqirgan
-        # #bo'lar edi
-        # # 2. save method ni ichida ba'zi field larni o'rnatib ketish mumkin.:
-        # #     >>> serializer.save(user=request.user)
-        # # attributes va subtotallarni serializer class da hisob kitob qilamiz
         serializer.save(user=request.user)
 
         return Response(
@@ -54,33 +44,10 @@ class AddToCartView(APIView):
             {
                 "request": self.request,
                 "view": self,
-                # example: AYtaylik serializerda user bilan ishlangan:
                 "user": self.request.user
-                # ...
             }
         )
         return kwargs
-
-
-    # def post(self, request, *args, **kwargs):
-    #     try:
-    #         serializer = self.serializer_class(data=request.data)
-    #         if not serializer.is_valid():
-    #             print(serializer.errors)
-    #             return Response(data={"message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-    #         data = serializer.validated_data
-    #         attributes = data.get('attributes', [])
-    #         subtotal = sum([AttributeValue.objects.get(id=attribute).price for attribute in attributes])
-    #         item = CartItem.objects.create(
-    #             user=request.user,
-    #             quantity=data.get("quantity"),
-    #             product=data.get("product"),
-    #             subtotal=subtotal
-    #         )
-    #         return Response(data={"message": "Product added to cart item.", "result": {"cart_item_id": item.id}})
-
-    #     except Products.DoesNotExist:
-    #         return Response(data={"message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UpdateUserCartItem(UpdateAPIView):

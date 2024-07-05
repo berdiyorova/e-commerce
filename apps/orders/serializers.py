@@ -1,3 +1,5 @@
+from django.db.models import Sum
+
 from rest_framework import serializers
 
 from orders.models import (
@@ -103,5 +105,5 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
     def total_price(self, validated_data):
         cart_items = CartItem.objects.filter(id__in=validated_data.get("items"))
-        total_price = sum([item.subtotal for item in cart_items])
+        total_price = cart_items.aggregate(Sum("subtotal"))["sum_subtotal"]
         return total_price

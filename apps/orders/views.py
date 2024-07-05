@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.generics import UpdateAPIView, ListAPIView, CreateAPIView, DestroyAPIView
+from rest_framework.generics import UpdateAPIView, ListAPIView, DestroyAPIView, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -73,10 +73,13 @@ class CartItemsListView(ListAPIView):
 class CartItemDeleteView(DestroyAPIView):
     serializer_class = CartItemListSerializer
     queryset = CartItem.objects.all()
-    lookup_field = 'pk'
 
     def delete(self, request, *args, **kwargs):
-        cart_item = self.queryset.get(user=request.user, pk=self.kwargs.get(self.lookup_field))
+        cart_item = get_object_or_404(
+            self.queryset,
+            user=request.user,
+            pk=self.kwargs.get(self.lookup_field)
+        )
         cart_item.delete()
         return Response(
             data={

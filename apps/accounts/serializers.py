@@ -94,7 +94,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
         exclude = ('user', )
-    def create(self, validated_data, request):
+    def create(self, validated_data):
         name = validated_data.get('name')
         phone = validated_data.get('phone_number')
         email = validated_data.get('email')

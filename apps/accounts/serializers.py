@@ -106,7 +106,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
         apartment = validated_data.get('apartment')
         intercom = validated_data.get('intercom')
         user_address = UserAddress.objects.create(
-            user=request.user,
+            user=self.context["request"].user,
             name=name,
             phone_number=phone,
             email=email,

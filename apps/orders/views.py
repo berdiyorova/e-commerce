@@ -63,7 +63,7 @@ class UpdateUserCartItem(UpdateAPIView):
 
 
 class CartItemsListView(ListAPIView):
-    queryset = CartItem.objects.all()
+    queryset = CartItem.objects.select_related("product").prefetch_related("attributes").all()
     serializer_class = CartItemListSerializer
 
     def get_queryset(self):

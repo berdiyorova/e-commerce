@@ -119,3 +119,21 @@ class UserAddressSerializer(serializers.ModelSerializer):
             intercom=intercom
         )
         return user_address
+
+
+class UserAddressSerializer2(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddress
+        fields = (
+            "id",
+            "name"
+            "phone_number"
+            "email"
+            "district"
+            "street"
+            "home_number"
+            "porch"
+            "floor"
+            "apartment"
+            "intercom"
+        )

@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.generics import UpdateAPIView, ListAPIView, CreateAPIView
+from rest_framework.generics import UpdateAPIView, ListAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,6 +8,8 @@ from orders.serializers import (
     AddToCartSerializer, CartItemListSerializer,
     OrderCreateSerializer, UpdateCartItemSerializer,
 )
+
+from apps.accounts.serializers import UserAddressSerializer
 
 
 class AddToCartView(APIView):
@@ -68,21 +70,39 @@ class CartItemsListView(ListAPIView):
         return self.queryset.filter(user=self.request.user)
 
 
-class OrderCreateView(CreateAPIView):
-    queryset = Orders.objects.all()
-    serializer_class = OrderCreateSerializer
+class CartItemDeleteView(DestroyAPIView):
+    serializer_class = CartItemListSerializer
+    queryset = CartItem.objects.all()
+    lookup_field = 'pk'
 
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.serializer_class(data=request.data)
-            if not serializer.is_valid():
-                print(serializer.errors)
-                return Response(data={"message": "invalid_data"}, status=status.HTTP_400_BAD_REQUEST)
-            address = UserAddress.objects.get(id=serializer.validated_data.get("user_address"))
-            cart_items = CartItem.objects.filter(id__in=serializer.validated_data.get("cart_items"))
-            total_price = sum([item.subtotal for item in cart_items])
-            order = Orders.objects.create(user=request.user, address=address, total_price=total_price)
-            return Response(data={"message": "order_created", "result": {"order_id": order.id}})
+    def delete(self, request, *args, **kwargs):
+        cart_item = self.queryset.get(user=request.user, pk=self.kwargs.get(self.lookup_field))
+        cart_item.delete()
+        return Response(
+            data={
+                "success": True,
+                "message": "Cart successfully deleted.",
+            }, status=204
+        )
 
-        except Exception as e:
-            return Response(data={"message": "error", "result": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class OrderCreateView(APIView):
+    def post(self, request):
+        order_serializer = OrderCreateSerializer(data=request.data)
+        address_serializer = UserAddressSerializer(data=request.data)
+
+        if order_serializer.is_valid() and address_serializer.is_valid():
+            address = address_serializer.save(user=request.user)
+            total_price = order_serializer.total_price()
+            order = order_serializer.save(user=request.user, address=address, total_price=total_price)
+
+            return Response({
+                'success': True,
+                'message': 'Order created',
+                'result': {'order_id': order.id}
+            })
+        else:
+            return Response(
+                data={"message": "invalid_data", "errors": order_serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )

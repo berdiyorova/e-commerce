@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from orders.models import (
-    AttributeValue, CartItem, Products,
+    AttributeValue, CartItem, Products, Orders
 )
 from products.serializers import ProductSerializer
 
@@ -70,6 +70,10 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = ("quantity", )
 
+    def get_object(self):
+        cart_item = self.queryset.get(user=self.request.user, product_id=self.kwargs.get(self.lookup_field))
+        return cart_item
+
 
 class CartItemListSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
@@ -79,6 +83,25 @@ class CartItemListSerializer(serializers.ModelSerializer):
         exclude = ('user',)
 
 
-class OrderCreateSerializer(serializers.Serializer):
-    cart_items = serializers.ListField(child=serializers.IntegerField(min_value=1))
-    user_address = serializers.IntegerField(required=True)
+class OrderCreateSerializer(serializers.ModelSerializer):
+    items = serializers.PrimaryKeyRelatedField(
+        queryset=CartItem.objects.all(),
+        many=True,
+        pk_field=serializers.IntegerField()
+    )
+
+    class Meta:
+        model = Orders
+        fields = ("items", )
+
+    def create(self, validated_data):
+        items = validated_data.pop('items', [])
+        self.instance = Orders.objects.create(**validated_data)
+        if items:
+            self.instance.items.set(items)
+        return self.instance
+
+    def total_price(self, validated_data):
+        cart_items = CartItem.objects.filter(id__in=validated_data.get("items"))
+        total_price = sum([item.subtotal for item in cart_items])
+        return total_price

@@ -6,7 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 
-from accounts.models import User
+from accounts.models import User, UserAddress
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -88,3 +88,34 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError('Passwords do not match')
 
         return attrs
+
+
+class UserAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddress
+        exclude = ('user', )
+    def create(self, validated_data, request):
+        name = validated_data.get('name')
+        phone = validated_data.get('phone_number')
+        email = validated_data.get('email')
+        district = validated_data.get('district')
+        street = validated_data.get('street')
+        home = validated_data.get('home_number')
+        porch = validated_data.get('porch')
+        floor = validated_data.get('floor')
+        apartment = validated_data.get('apartment')
+        intercom = validated_data.get('intercom')
+        user_address = UserAddress.objects.create(
+            user=request.user,
+            name=name,
+            phone_number=phone,
+            email=email,
+            district=district,
+            street=street,
+            home_number=home,
+            porch=porch,
+            floor=floor,
+            apartment=apartment,
+            intercom=intercom
+        )
+        return user_address

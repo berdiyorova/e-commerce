@@ -20,6 +20,7 @@ class Orders(models.Model):
     class Meta:
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
+        ordering = ("-created_at",)
 
     class Status(models.TextChoices):
         CREATED = 'created', 'Created'
@@ -45,3 +46,5 @@ class Orders(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices)
     payment_type = models.CharField(max_length=20, choices=PaymentType.choices)
     payment_status = models.CharField(max_length=20, choices=PaymentStatus.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

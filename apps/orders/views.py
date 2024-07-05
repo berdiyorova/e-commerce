@@ -58,7 +58,11 @@ class UpdateUserCartItem(UpdateAPIView):
     lookup_field = 'product_id'
 
     def get_object(self):
-        cart_item = self.queryset.get(user=self.request.user, product=self.kwargs.get(self.lookup_field))
+        cart_item = get_object_or_404(
+            self.queryset,
+            user=self.request.user,
+            product=self.kwargs.get(self.lookup_field)
+        )
         return cart_item
 
 

@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from rest_framework import status
 from rest_framework.generics import UpdateAPIView, ListAPIView, DestroyAPIView, get_object_or_404
 from rest_framework.response import Response
@@ -94,6 +96,8 @@ class CartItemDeleteView(DestroyAPIView):
 
 
 class OrderCreateView(APIView):
+
+    @transaction.atomic()
     def post(self, request):
         order_serializer = OrderCreateSerializer(data=request.data)
         address_serializer = UserAddressSerializer(data=request.data)

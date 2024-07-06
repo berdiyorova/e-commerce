@@ -48,3 +48,5 @@ class Orders(models.Model):
     payment_status = models.CharField(max_length=20, choices=PaymentStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def str(self): return self.created_at

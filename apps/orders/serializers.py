@@ -92,16 +92,19 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Orders
-        fields = ("items", )
+        fields = ("items",)
+
+    def validate(self, attrs):
+        items = attrs['items']
+        print(len(items))
+        attrs['total_price'] = sum([item.subtotal for item in items])
+
+        return attrs
 
     def create(self, validated_data):
         items = validated_data.pop('items', [])
         self.instance = Orders.objects.create(**validated_data)
         if items:
             self.instance.items.set(items)
-        return self.instance
 
-    def total_price(self, validated_data):
-        cart_items = CartItem.objects.filter(id__in=validated_data.get("items"))
-        total_price = sum([item.subtotal for item in cart_items])
-        return total_price
+        return self.instance

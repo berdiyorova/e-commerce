@@ -94,7 +94,8 @@ class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
         exclude = ('user', )
-    def create(self, validated_data, request):
+
+    def create(self, validated_data):
         name = validated_data.get('name')
         phone = validated_data.get('phone_number')
         email = validated_data.get('email')
@@ -106,7 +107,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
         apartment = validated_data.get('apartment')
         intercom = validated_data.get('intercom')
         user_address = UserAddress.objects.create(
-            user=request.user,
+            user=self.context['request'].user,
             name=name,
             phone_number=phone,
             email=email,

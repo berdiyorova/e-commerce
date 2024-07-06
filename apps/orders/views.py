@@ -32,7 +32,7 @@ class AddToCartView(APIView):
         """
         Requestda kelgan datani ishlash uchun serializer class ni
         kerakli parametrlarni o'tkazgan holda qaytaradi.
-        Misol uchun `request` serializer class da ishlatiladimi? shu yerda 
+        Misol uchun `request` serializer class da ishlatiladimi? shu yerda
         qo'shib yuborish kerak
         """
         kwargs = self.get_serializer_context(**kwargs)
@@ -87,14 +87,14 @@ class CartItemDeleteView(DestroyAPIView):
 
 
 class OrderCreateView(APIView):
+
     def post(self, request):
         order_serializer = OrderCreateSerializer(data=request.data)
-        address_serializer = UserAddressSerializer(data=request.data)
+        address_serializer = UserAddressSerializer(context={"request": request}, data=request.data)
 
         if order_serializer.is_valid() and address_serializer.is_valid():
             address = address_serializer.save(user=request.user)
-            total_price = order_serializer.total_price()
-            order = order_serializer.save(user=request.user, address=address, total_price=total_price)
+            order = order_serializer.save(user=request.user, address=address)
 
             return Response({
                 'success': True,
@@ -106,3 +106,15 @@ class OrderCreateView(APIView):
                 data={"message": "invalid_data", "errors": order_serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+    def get_serializer(self, *args, **kwargs):
+        """
+        Return the serializer instance that should be used for validating and
+        deserializing input, and for serializing output.
+        """
+        serializer_class = UserAddressSerializer
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
+    def get_serializer_context(self, **kwargs):
+        return {'request': self.request}

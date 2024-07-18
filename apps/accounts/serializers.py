@@ -93,30 +93,16 @@ class ChangePasswordSerializer(serializers.Serializer):
 class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
-        exclude = ('user', )
-
-    def create(self, validated_data):
-        name = validated_data.get('name')
-        phone = validated_data.get('phone_number')
-        email = validated_data.get('email')
-        district = validated_data.get('district')
-        street = validated_data.get('street')
-        home = validated_data.get('home_number')
-        porch = validated_data.get('porch')
-        floor = validated_data.get('floor')
-        apartment = validated_data.get('apartment')
-        intercom = validated_data.get('intercom')
-        user_address = UserAddress.objects.create(
-            user=self.context['request'].user,
-            name=name,
-            phone_number=phone,
-            email=email,
-            district=district,
-            street=street,
-            home_number=home,
-            porch=porch,
-            floor=floor,
-            apartment=apartment,
-            intercom=intercom
+        fields = (
+            "id",
+            "name",
+            "phone_number",
+            "email",
+            "district",
+            "street",
+            "home_number",
+            "porch",
+            "floor",
+            "apartment",
+            "intercom",
         )
-        return user_address

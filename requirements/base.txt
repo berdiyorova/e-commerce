@@ -4,5 +4,6 @@ psycopg2_binary==2.9.9
 djangorestframework==3.15.1
 djangorestframework-simplejwt==5.3.1
 pillow==10.3.0
-django-taggit==5.0.1
 django-filter==24.2
+django-taggit==5.0.1
+drf_spectacular==0.27

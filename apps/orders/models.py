@@ -41,12 +41,15 @@ class Orders(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='orders')
-    items = models.ManyToManyField(CartItem, related_name='orders')
-    total_price = models.FloatField()
-    status = models.CharField(max_length=20, choices=Status.choices)
+    items = models.ManyToManyField(CartItem, related_name='items')
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.CREATED)
     payment_type = models.CharField(max_length=20, choices=PaymentType.choices)
     payment_status = models.CharField(max_length=20, choices=PaymentStatus.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def str(self): return self.created_at
+    @property
+    def total_price(self):
+        return sum([item.subtotal for item in self.items.all()])  # Bu holatda ManyToMany field bo'lgani uchun .all()
+        # metodidan foydalaniladi
+

@@ -12,6 +12,7 @@ class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [AllowAny, ]
+    pagination_class = None
 
 
 class CategoryCreateView(generics.CreateAPIView):
@@ -46,13 +47,14 @@ class ProductFilterSet(FilterSet):
         fields = ['product_name', 'tags']
 
     def filter_tags(self, queryset, name, value):
-        return queryset.filter(tags__name__in=value)
+        return queryset.filter(tags__name=value)
 
 
 class ProductListView(generics.ListAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny, ]
+    pagination_class = None
 
     filter_backends = (DjangoFilterBackend,)
     filter_class = ProductFilterSet
@@ -85,6 +87,7 @@ class DiscountedProductsView(generics.ListAPIView):
     serializer_class = DiscountSerializer
     permission_classes = [AllowAny, ]
     queryset = Discount.objects.all()
+    pagination_class = None
 
 
 class DiscountedProductCreateView(generics.CreateAPIView):

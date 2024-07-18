@@ -1,3 +1,5 @@
+from django.db.models import Sum
+
 from rest_framework import serializers
 
 from orders.models import (
@@ -89,17 +91,11 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         many=True,
         pk_field=serializers.IntegerField()
     )
+    total_price = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Orders
-        fields = ("items",)
-
-    def validate(self, attrs):
-        items = attrs['items']
-        print(len(items))
-        attrs['total_price'] = sum([item.subtotal for item in items])
-
-        return attrs
+        fields = ("items", "total_price")
 
     def create(self, validated_data):
         items = validated_data.pop('items', [])
@@ -108,3 +104,11 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             self.instance.items.set(items)
 
         return self.instance
+
+
+class OrderListSerializer(serializers.ModelSerializer):
+    items = CartItemListSerializer(many=True)
+
+    class Meta:
+        model = Orders
+        fields = ('id', 'created_at', 'total_price', 'status', 'payment_status', 'payment_type', 'address', 'items')

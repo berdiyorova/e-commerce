@@ -6,7 +6,7 @@ from accounts.models import User, UserAddress
 admin.site.unregister(Group)
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'is_staff', 'is_active')
+    list_display = ('name', 'email', 'is_staff', 'is_active', 'role')
 
 
 admin.site.register(User, UserAdmin)

@@ -6,9 +6,18 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from accounts.managers import UserManager
 
 
+
 class User(AbstractBaseUser, PermissionsMixin):
+    class Role(models.TextChoices):
+        ADMIN = 'ADMIN', 'admin'
+        OWNER = 'OWNER', 'owner'
+        EMPLOYEE = 'EMPLOYEE', 'employee'
+        DELIVERY = 'DELIVERY', 'delivery'
+        CLIENT = 'CLIENT', 'client'
+
     name = models.CharField(max_length=250, blank=True, null=True)
     email = models.EmailField(unique=True)
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.CLIENT)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     phone = models.CharField(max_length=20, validators=[RegexValidator(r'^\*?1?\d{9,13}$')], blank=True, null=True)

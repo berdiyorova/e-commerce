@@ -10,7 +10,7 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(), slug_field="category_name"
     )
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
     class Meta:
         model = Products
@@ -25,8 +25,8 @@ class ProductSerializer(TaggitSerializer, serializers.ModelSerializer):
     def validate(self, attrs):
         super(ProductSerializer, self).validate(attrs)
         category = attrs.get('category')
-        name = attrs.get('name')
-        if Products.objects.filter(category=category, name=name).exists():
+        name = attrs.get('product_name')
+        if Products.objects.filter(category=category, product_name=name).exists():
             data = {
                 "success": False,
                 "message": "Product with this name in this category already exists."

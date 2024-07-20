@@ -10,6 +10,7 @@ from orders.serializers import (
     AddToCartSerializer, CartItemListSerializer,
     OrderCreateSerializer, UpdateCartItemSerializer, OrderListSerializer
 )
+from orders.permissions import IsOwnerOrEmployee
 
 from apps.accounts.serializers import UserAddressSerializer
 
@@ -140,8 +141,12 @@ class OrderListView(ListAPIView):
 
 
 class OrderCancelView(APIView):
+    permission_classes = [IsOwnerOrEmployee]
     def post(self, request, *args, **kwargs):
         order = get_object_or_404(Orders, id=kwargs.get('pk'))
+
+        self.check_object_permissions(request, order)
+
         if order.status == Orders.Status.CREATED:
             order.status = Orders.Status.CANCELED
             order.save()
@@ -151,4 +156,3 @@ class OrderCancelView(APIView):
             data={'message': 'order cannot be cancelled'},
             status=status.HTTP_400_BAD_REQUEST
         )
-

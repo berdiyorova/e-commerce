@@ -48,11 +48,6 @@ class Orders(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        permissions = [
-            ("can_change_status", "Buyurtma holatini o'zgartirish")
-        ]
-
     @property
     def total_price(self):
         return sum([item.subtotal for item in self.items.all()])  # Bu holatda ManyToMany field bo'lgani uchun .all()
